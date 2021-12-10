@@ -29,5 +29,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function() {
     Route::prefix('branches')->group(function () {
         Route::get('/', [BranchController::class, 'index'])->name('branches.index');
     });
+
+    Route::prefix('wallets')->group(function () {
+        Route::get('/', [BranchController::class, 'index'])->name('wallets.index');
+    });
+
+    Route::prefix('customers')->group(function () {
+        Route::get('/', [BranchController::class, 'index'])->name('customers.index');
+    });
 });
 

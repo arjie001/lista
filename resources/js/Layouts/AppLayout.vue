@@ -22,6 +22,12 @@
                                 <jet-nav-link :href="route('branches.index')" :active="route().current('branches.index')">
                                     Branches
                                 </jet-nav-link>
+                                <jet-nav-link :href="route('wallets.index')" :active="route().current('wallets.index')">
+                                    Wallets
+                                </jet-nav-link>
+                                <jet-nav-link :href="route('customers.index')" :active="route().current('customers.index')">
+                                    Customers
+                                </jet-nav-link>
                             </div>
                         </div>
 
@@ -144,6 +150,12 @@
                     <div class="pt-2 pb-3 space-y-1">
                         <jet-responsive-nav-link :href="route('branches.index')" :active="route().current('branches.index')">
                             Branches
+                        </jet-responsive-nav-link>
+                        <jet-responsive-nav-link :href="route('wallets.index')" :active="route().current('wallets.index')">
+                            Wallets
+                        </jet-responsive-nav-link>
+                        <jet-responsive-nav-link :href="route('customers.index')" :active="route().current('customers.index')">
+                            Customers
                         </jet-responsive-nav-link>
                     </div>
 
