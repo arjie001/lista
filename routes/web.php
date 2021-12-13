@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\WalletController;
+use App\Http\Controllers\TransactionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,21 +19,23 @@ use App\Http\Controllers\BranchController;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return redirect("login");
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function() {
     Route::prefix('branches')->group(function () {
         Route::get('/', [BranchController::class, 'index'])->name('branches.index');
+        Route::post('/store', [BranchController::class, 'store'])->name('branches.store');
+        
+        Route::prefix('{branch_code}/transactions')->group(function () {
+            Route::get('/', [TransactionController::class, 'index'])->name('transactions.index');
+            Route::post('/store', [TransactionController::class, 'store'])->name('transactions.store');
+        });
     });
 
     Route::prefix('wallets')->group(function () {
-        Route::get('/', [BranchController::class, 'index'])->name('wallets.index');
+        Route::get('/', [WalletController::class, 'index'])->name('wallets.index');
+        Route::post('/store', [WalletController::class, 'store'])->name('wallets.store');
     });
 
     Route::prefix('customers')->group(function () {

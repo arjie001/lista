@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\Wallet;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Str;
+
+use Inertia\Inertia;
 
 class WalletController extends Controller
 {
@@ -14,7 +20,12 @@ class WalletController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+        $wallets = Wallet::where(['team_id' => $user->currentTeam->id])->get();
+        return Inertia::render('Wallets/Index', [
+            'wallets' => $wallets,
+            'admin_user' => $user->hasTeamRole($user->currentTeam, 'admin')
+        ]);
     }
 
     /**
@@ -35,7 +46,20 @@ class WalletController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => ['required']
+        ]);
+
+        $user = Auth::user();
+
+        Wallet::create([
+            'name' => $request->name,
+            'code' => Str::random(5),
+            'balance' => 0,
+            'team_id' => $user->currentTeam->id
+        ]);
+
+        return Redirect::back();
     }
 
     /**

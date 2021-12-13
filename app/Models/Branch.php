@@ -15,4 +15,14 @@ class Branch extends Model
     protected $casts = [
         'config' => 'json',
     ];
+
+    public function team(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'team_id');
+    }
+    
+    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Transaction::class, 'branch_id', 'id');
+    }
 }

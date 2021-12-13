@@ -3,28 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\Transaction;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 use Inertia\Inertia;
 
-class BranchController extends Controller
+class TransactionController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($branch_code)
     {
-        $user = Auth::user();
-        $branches = Branch::where(['team_id' => $user->currentTeam->id])->get();
-        return Inertia::render('Branches/Index', [
-            'branches' => $branches,
-            'admin_user' => $user->hasTeamRole($user->currentTeam, 'admin')
+        $branch = Branch::whereCode($branch_code)->first();
+        $transactions = Transaction::where(['branch_id' => $branch->id])->get();
+        return Inertia::render('Transactions/Index', [
+            'branch' => $branch,
+            'transactions' => $transactions
         ]);
     }
 
@@ -46,19 +45,7 @@ class BranchController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => ['required']
-        ]);
-
-        $user = Auth::user();
-
-        Branch::create([
-            'name' => $request->name,
-            'code' => Str::random(5),
-            'team_id' => $user->currentTeam->id
-        ]);
-
-        return Redirect::back();
+        //
     }
 
     /**
