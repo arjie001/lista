@@ -6,7 +6,7 @@
 
         <div class="py-1">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden overflow-y-auto" :class="$page.props.admin_user ? 'content-admin': 'content-editor'">
                     <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                         <div class="text-gray-500 total-container grid grid-cols-9 gap-1">
                             <div class="col-span-3 flex flex-col">
@@ -76,6 +76,9 @@
                     add: false
                 }
             }
+        },
+        mounted() {
+            this.$page.props.admin_user = true
         },
         methods: {
             addBranch() {                

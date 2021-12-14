@@ -1,11 +1,13 @@
 require('./bootstrap');
 
 import { createApp, h } from 'vue';
-import { createInertiaApp } from '@inertiajs/inertia-vue3';
+import { createInertiaApp, Link } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
 
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
+
+import MyHelpers from './Mixin/MyHelpers'
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -18,7 +20,9 @@ createInertiaApp({
             .use(VueToast, {
                 position: 'top'
             })
+            .component('InertiaLink', Link)
             .mixin({ methods: { route } })
+            .mixin(MyHelpers)
             .mount(el);
     },
 });

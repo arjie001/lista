@@ -1,3 +1,13 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+.content-editor {
+    height: calc(100vh - 5rem);
+}
+.content-admin {
+    height: calc(100vh - 11rem);
+}
+.content-transaction {
+    height: calc(100vh - 9rem);
+}

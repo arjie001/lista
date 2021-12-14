@@ -13,7 +13,7 @@ class Transaction extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'config' => 'json',
+        'data' => 'json',
     ];
 
     public function branch(): \Illuminate\Database\Eloquent\Relations\BelongsTo
