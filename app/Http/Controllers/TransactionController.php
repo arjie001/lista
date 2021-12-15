@@ -49,7 +49,18 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /* $request->validate([
+            'name' => ['required']
+        ]); */
+
+        $user = Auth::user();
+
+        Transaction::create([
+            'branch_id' => $request->branch_id,
+            'data' => $request->data
+        ]);
+
+        return Redirect::back();
     }
 
     /**

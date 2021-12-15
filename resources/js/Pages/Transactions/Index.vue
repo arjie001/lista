@@ -28,10 +28,10 @@
         </div>
 
         <jet-dialog-modal :show="modal.add.show">
-            <template #title>Add Branch</template>
+            <template #title>Add List</template>
             <template #content>
                 <jet-label value="Customer" />
-                <jet-input-select class="w-full" :lists="[{value: 'Others', text: 'Others'}, {value: 'Arjie', text: 'Arjie'}]" v-model="modal.add.data.customer" />
+                <jet-input-select class="w-full" :lists="[{value: 'Others', text: 'Others'}, {value: 'Arjie', text: 'Arjie'}]" v-model="form.data.customer" />
                 
                 <div class="flex flex-col flex-grow border border-1 border-gray-300 rounded-sm mt-2">
                     <div class="mb-2"> 
@@ -42,15 +42,15 @@
                     <div class="grid grid-cols-6 gap-1 my-1 mx-1">
                         <div class="col-span-6">
                             <jet-label value="Wallet" />
-                            <jet-input-select class="w-full" :lists="wallets" v-model="modal.add.data.money_in.wallet_id" />
+                            <jet-input-select class="w-full" :lists="wallets" v-model="form.data.money_in.wallet_id" />
                         </div>
-                        <div class="col-span-6">
+                        <div class="col-span-3">
                             <jet-label value="Amount" />
-                            <jet-input type="number" class="w-full" v-model="modal.add.data.money_in.amount"/>
+                            <jet-input type="number" class="w-full" v-model="form.data.money_in.amount"/>
                         </div>
-                        <div class="col-span-6">
+                        <div class="col-span-3">
                             <jet-label value="Paid" />
-                            <jet-input type="number" class="w-full" v-model="modal.add.data.money_in.paid"/>
+                            <jet-input type="number" class="w-full" v-model="form.data.money_in.paid"/>
                         </div>
                     </div>
                 </div>
@@ -64,11 +64,11 @@
                     <div class="grid grid-cols-6 gap-1 my-1 mx-1">
                         <div class="col-span-6">
                             <jet-label value="Wallet" />
-                            <jet-input-select class="w-full" :lists="wallets" v-model="modal.add.data.money_out.wallet_id" />
+                            <jet-input-select class="w-full" :lists="wallets" v-model="form.data.money_out.wallet_id" />
                         </div>
                         <div class="col-span-6">
                             <jet-label value="Amount" />
-                            <jet-input type="number" class="w-full" v-model="modal.add.data.money_out.amount"/>
+                            <jet-input type="number" class="w-full" v-model="form.data.money_out.amount"/>
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
             </template>
             <template #footer>
                 <jet-button color="none" @click="modal.add.show = false" class="mr-1">close</jet-button>
-                <jet-button color="black" @click="addBranch()" :disabled="form.processing">{{ form.processing ? 'wait': 'save' }}</jet-button>
+                <jet-button color="black" @click="addTransaction()" :disabled="form.processing">{{ form.processing ? 'wait': 'save' }}</jet-button>
             </template>
         </jet-dialog-modal>
     </app-layout>
@@ -109,26 +109,26 @@
         data() {
             return {
                 form: this.$inertia.form({
-                    name:'',
+                    branch_id: 1,
+                    data: {
+                        customer: 'Others',
+                        money_in: {
+                            amount: 0,
+                            paid: 0,
+                            wallet_id: 0
+                        },
+                        money_out: {
+                            amount: 0,
+                            paid: 0,
+                            wallet_id: 0
+                        }
+                    }
                 }, {
                     resetOnSuccess:true,
                 }),
                 modal: {
                     add: {
                         show: false,
-                        data: {
-                            customer: 'Others',
-                            money_in: {
-                                amount: 0,
-                                paid: 0,
-                                wallet_id: 0
-                            },
-                            money_out: {
-                                amount: 0,
-                                paid: 0,
-                                wallet_id: 0
-                            }
-                        },
                         default_data: {
                             customer: 'Others',
                             money_in: {
@@ -164,26 +164,24 @@
         },
         methods: {
             initialized() {
+                this.form.branch_id = this.assign(this.$page.props.branch.id)
                 this.modal.add.default_data.money_in.wallet_id = this.assign(this.$page.props.wallets[0].id)
                 this.modal.add.default_data.money_out.wallet_id = this.assign(this.$page.props.wallets[0].id)
             },
             showModal(modal) {
                 this.modal[modal].show = true
-                this.modal[modal].data = this.assign(this.modal[modal].default_data)
+                //this.form.data = this.assign(this.modal.add.default_data)
             },
             addTransaction() {    
-                this.$toast.success('Transaction Saved',{
-                    duration:1000
-                })            
-                /* this.form.post(route('branches.store'),{
+                this.form.post(route('transactions.store'),{
                     preserveScroll:true,
                     onSuccess:() => {
-                        this.$toast.success('Branch Added',{
+                        this.$toast.success('List Saved',{
                             duration:1000
                         })
                         this.modal.add = false
                     },
-                }) */
+                })
             }
         }
     })
