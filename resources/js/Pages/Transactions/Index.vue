@@ -32,11 +32,44 @@
             <template #content>
                 <jet-label value="Customer" />
                 <jet-input-select class="w-full" :lists="[{value: 'Others', text: 'Others'}, {value: 'Arjie', text: 'Arjie'}]" v-model="modal.add.data.customer" />
-                <div class="grid grid-cols-6 gap-1 mt-1">
-                    <div class="col-span-1">
-                        <jet-label value="Amount" />
-                        <jet-input type="number" class="w-full" v-model="form.name" required autofocus/>
-                        <jet-input-error :message="form.errors.name" />
+                
+                <div class="flex flex-col flex-grow border border-1 border-gray-300 rounded-sm mt-2">
+                    <div class="mb-2"> 
+                        <span class="flex justify-left font-semibold text-gray-500 bg-blue-300 rounded-sm QQ pl-1">
+                            Money In
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-6 gap-1 my-1 mx-1">
+                        <div class="col-span-6">
+                            <jet-label value="Wallet" />
+                            <jet-input-select class="w-full" :lists="wallets" v-model="modal.add.data.money_in.wallet_id" />
+                        </div>
+                        <div class="col-span-6">
+                            <jet-label value="Amount" />
+                            <jet-input type="number" class="w-full" v-model="modal.add.data.money_in.amount"/>
+                        </div>
+                        <div class="col-span-6">
+                            <jet-label value="Paid" />
+                            <jet-input type="number" class="w-full" v-model="modal.add.data.money_in.paid"/>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col flex-grow border border-1 border-gray-300 rounded-sm mt-2">
+                    <div class="mb-2"> 
+                        <span class="flex justify-left font-semibold text-gray-100 bg-red-300 rounded-sm QQ pl-1">
+                            Money Out
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-6 gap-1 my-1 mx-1">
+                        <div class="col-span-6">
+                            <jet-label value="Wallet" />
+                            <jet-input-select class="w-full" :lists="wallets" v-model="modal.add.data.money_out.wallet_id" />
+                        </div>
+                        <div class="col-span-6">
+                            <jet-label value="Amount" />
+                            <jet-input type="number" class="w-full" v-model="modal.add.data.money_out.amount"/>
+                        </div>
                     </div>
                 </div>
                 
@@ -113,7 +146,27 @@
                 }
             }
         },
+        computed: {
+            wallets() {
+                let list = []
+                for (const key in this.$page.props.wallets) {
+                    let data = {
+                        value: this.$page.props.wallets[key].id,
+                        text: this.$page.props.wallets[key].name,
+                    }
+                    list.push({...data})
+                }
+                return list
+            }
+        },
+        mounted() {
+            this.initialized()
+        },
         methods: {
+            initialized() {
+                this.modal.add.default_data.money_in.wallet_id = this.assign(this.$page.props.wallets[0].id)
+                this.modal.add.default_data.money_out.wallet_id = this.assign(this.$page.props.wallets[0].id)
+            },
             showModal(modal) {
                 this.modal[modal].show = true
                 this.modal[modal].data = this.assign(this.modal[modal].default_data)

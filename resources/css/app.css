@@ -11,3 +11,9 @@
 .content-transaction {
     height: calc(100vh - 9rem);
 }
+
+.QQ {
+    width:5.2rem;
+    border-bottom-right-radius: 1rem;
+    font-size:0.9rem;
+}

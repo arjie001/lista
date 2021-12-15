@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\Transaction;
+use App\Models\Wallet;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -19,10 +20,13 @@ class TransactionController extends Controller
      */
     public function index($branch_code)
     {
+        $user = Auth::user();
         $branch = Branch::whereCode($branch_code)->first();
         $transactions = Transaction::where(['branch_id' => $branch->id])->get();
+        $wallets = Wallet::where(['team_id' => $user->currentTeam->id])->get();
         return Inertia::render('Transactions/Index', [
             'branch' => $branch,
+            'wallets' => $wallets,
             'transactions' => $transactions
         ]);
     }
