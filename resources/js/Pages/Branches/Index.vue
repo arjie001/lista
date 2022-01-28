@@ -8,20 +8,7 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden overflow-y-auto" :class="$page.props.admin_user ? 'content-admin': 'content-editor'">
                     <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
-                        <div class="text-gray-500 total-container grid grid-cols-9 gap-1">
-                            <div class="col-span-3 flex flex-col">
-                                <span class="text-center">23,000</span>
-                                <span class="text-center">Widrawn</span>
-                            </div>
-                            <div class="col-span-3 flex flex-col">
-                                <span class="text-center">23,000</span>
-                                <span class="text-center">Investment</span>
-                            </div>
-                            <div class="col-span-3 flex flex-col">
-                                <span class="text-center">23,000</span>
-                                <span class="text-center">Capital</span>
-                            </div>
-                        </div>
+                        <wgt-total-header :total="total" />
                     </div>
                     <branch-list />
                 </div>
@@ -51,10 +38,12 @@
     import JetLabel from '@/Jetstream/Label.vue'
     import JetInput from '@/Jetstream/Input.vue'
     import JetInputError from '@/Jetstream/InputError.vue'
+    import WgtTotalHeader from '@/Widgets/TotalHeader.vue'
 
     import BranchList from './List.vue'
 
     export default defineComponent({
+        name: 'branches',
         components: {
             AppLayout,
             JetButton,
@@ -62,7 +51,7 @@
             JetLabel,
             JetInput,
             JetInputError,
-
+            WgtTotalHeader,
             BranchList,
         },
         data() {
@@ -75,6 +64,31 @@
                 modal: {
                     add: false
                 }
+            }
+        },
+        computed: {
+            total() {
+                let data = {
+                    in: {
+                        amount: 0,
+                        text: 'Earned'
+                    },
+                    out: {
+                        amount: 0,
+                        text: 'Expenses'
+                    },
+                    balance: {
+                        amount: 0,
+                        text: 'Total Profit'
+                    }
+                }
+                for (const key in this.$page.props.transactions) {
+                    data.in.amount += this.$page.props.transactions[key].data.money_in.amount
+                    data.out.amount += this.$page.props.transactions[key].data.money_out.amount
+                }
+                data.balance.amount = data.in.amount - data.out.amount
+
+                return data
             }
         },
         mounted() {

@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Wallet;
-use App\Models\WalletTransaction;
+use App\Models\Branch;
+use App\Models\BranchTransaction;
+use App\Models\Customer;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 use Inertia\Inertia;
 
-class WalletController extends Controller
+class CustomerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,11 +22,11 @@ class WalletController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $wallets = Wallet::where(['team_id' => $user->currentTeam->id])->get();
-        $transactions = WalletTransaction::whereIn('wallet_id', $wallets->pluck('id'))->get();
-        return Inertia::render('Wallets/Index', [
-            'wallets' => $wallets,
-            'transactions' => $transactions,
+        $customers = Customer::with('transactions')->where(['team_id' => $user->currentTeam->id])->get();
+        $branches = Branch::where(['team_id' => $user->currentTeam->id])->get();
+        return Inertia::render('Customer/Index', [
+            'customers' => $customers,
+            'branches' => $branches,
             'admin_user' => $user->hasTeamRole($user->currentTeam, 'admin')
         ]);
     }
@@ -52,14 +52,14 @@ class WalletController extends Controller
         $request->validate([
             'name' => ['required']
         ]);
-
+        $branch = Branch::whereCode($request->branch_code)->first();
         $user = Auth::user();
 
-        Wallet::create([
+        Customer::create([
             'name' => $request->name,
-            'code' => Str::random(5),
-            'balance' => 0,
-            'team_id' => $user->currentTeam->id
+            'data' => $request->info,
+            'team_id' => $user->currentTeam->id,
+            'branch_id' => $branch->id
         ]);
 
         return Redirect::back();
@@ -96,7 +96,15 @@ class WalletController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $customer = Customer::find($id);
+        $branch = Branch::whereCode($request->branch_code)->first();
+        $customer->update([
+            'name' => $request->name,
+            'data' => $request->info,
+            'branch_id' => $branch->id
+        ]);
+
+        return Redirect::back();
     }
 
     /**

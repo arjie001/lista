@@ -6,22 +6,9 @@
 
         <div class="py-1">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg overflow-hidden overflow-y-auto" :class="$page.props.admin_user ? 'content-admin': 'content-editor'">
                     <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
-                        <div class="text-gray-500 total-container grid grid-cols-9 gap-1">
-                            <div class="col-span-3 flex flex-col">
-                                <span class="text-center">23,000</span>
-                                <span class="text-center">Widrawn</span>
-                            </div>
-                            <div class="col-span-3 flex flex-col">
-                                <span class="text-center">23,000</span>
-                                <span class="text-center">Investment</span>
-                            </div>
-                            <div class="col-span-3 flex flex-col">
-                                <span class="text-center">23,000</span>
-                                <span class="text-center">Capital</span>
-                            </div>
-                        </div>
+                        <wgt-total-header :total="total" />
                     </div>
                     <wallet-list />
                 </div>
@@ -31,7 +18,7 @@
         <jet-dialog-modal :show="modal.add">
             <template #title>Add Wallet</template>
             <template #content>
-                <jet-label value="Branch Name" />
+                <jet-label value="Wallet Name" />
                 <jet-input type="text" class="w-full" v-model="form.name" required autofocus/>
                 <jet-input-error :message="form.errors.name" />
             </template>
@@ -51,10 +38,12 @@
     import JetLabel from '@/Jetstream/Label.vue'
     import JetInput from '@/Jetstream/Input.vue'
     import JetInputError from '@/Jetstream/InputError.vue'
+    import WgtTotalHeader from '@/Widgets/TotalHeader.vue'
 
     import WalletList from './List.vue'
 
     export default defineComponent({
+        name: 'wallets',
         components: {
             AppLayout,
             JetButton,
@@ -62,7 +51,7 @@
             JetLabel,
             JetInput,
             JetInputError,
-
+            WgtTotalHeader,
             WalletList,
         },
         data() {
@@ -75,6 +64,31 @@
                 modal: {
                     add: false
                 }
+            }
+        },
+        computed: {
+            total() {
+                let data = {
+                    in: {
+                        amount: 0,
+                        text: 'Cash in'
+                    },
+                    out: {
+                        amount: 0,
+                        text: 'Cash out'
+                    },
+                    balance: {
+                        amount: 0,
+                        text: 'Total Balance'
+                    }
+                }
+                for (const key in this.$page.props.transactions) {
+                    data[this.$page.props.transactions[key].data.method].amount += parseFloat(this.$page.props.transactions[key].data.amount)
+                }
+                for (const key in this.$page.props.wallets) {
+                    data.balance.amount += this.$page.props.wallets[key].balance
+                }
+                return data
             }
         },
         methods: {

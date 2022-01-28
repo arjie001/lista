@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\BranchTransaction;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,8 +23,10 @@ class BranchController extends Controller
     {
         $user = Auth::user();
         $branches = Branch::where(['team_id' => $user->currentTeam->id])->get();
+        $transactions = BranchTransaction::whereIn('branch_id', $branches->pluck('id'))->get();
         return Inertia::render('Branches/Index', [
             'branches' => $branches,
+            'transactions' => $transactions,
             'admin_user' => $user->hasTeamRole($user->currentTeam, 'admin')
         ]);
     }
@@ -52,9 +55,16 @@ class BranchController extends Controller
 
         $user = Auth::user();
 
+        $default_config = [
+            'default' => [
+                'wallet_in' => 0,
+                'wallet_out' => 0
+            ]
+        ];
         Branch::create([
             'name' => $request->name,
             'code' => Str::random(5),
+            'config' => $default_config,
             'team_id' => $user->currentTeam->id
         ]);
 

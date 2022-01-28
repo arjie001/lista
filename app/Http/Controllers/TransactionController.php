@@ -6,6 +6,7 @@ use App\Models\Branch;
 use App\Models\Transaction;
 use App\Models\Wallet;
 
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -24,7 +25,7 @@ class TransactionController extends Controller
         $branch = Branch::whereCode($branch_code)->first();
         $transactions = Transaction::where(['branch_id' => $branch->id])->get();
         $wallets = Wallet::where(['team_id' => $user->currentTeam->id])->get();
-        return Inertia::render('Transactions/Index', [
+        return Inertia::render('BranchTransactions/Index', [
             'branch' => $branch,
             'wallets' => $wallets,
             'transactions' => $transactions
@@ -47,17 +48,25 @@ class TransactionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $branch_code)
     {
-        /* $request->validate([
-            'name' => ['required']
-        ]); */
-
+        $branch = Branch::whereCode($branch_code)->first();
         $user = Auth::user();
 
+        $wallet_in = Wallet::find($request->list_data['money_in']['wallet_id']);
+        $wallet_in->update([
+            'balance' => $wallet_in->balance + $request->list_data['money_in']['amount']
+        ]);
+
+        $wallet_out = Wallet::find($request->list_data['money_out']['wallet_id']);
+        $wallet_out->update([
+            'balance' => $wallet_out->balance - $request->list_data['money_out']['amount']
+        ]);
+
         Transaction::create([
-            'branch_id' => $request->branch_id,
-            'data' => $request->data
+            'data' => $request->list_data,
+            'user_id' => $user->id,
+            'branch_id' => $branch->id
         ]);
 
         return Redirect::back();
