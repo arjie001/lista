@@ -14,8 +14,8 @@
 
         <form @submit.prevent="submit">
             <div>
-                <jet-label for="username" value="Username" />
-                <jet-input id="username" type="text" class="mt-1 block w-full" v-model="form.email" required autofocus />
+                <jet-label for="email" value="Email" />
+                <jet-input id="email" type="text" class="mt-1 block w-full" v-model="form.email" required autofocus />
             </div>
 
             <div class="mt-4">
@@ -29,16 +29,23 @@
                     <span class="ml-2 text-sm text-gray-600">Remember me</span>
                 </label>
             </div>
+            <div class="grid grid-cols-6">
+                <div class="col-span-2 flex items-center mt-4">
+                    <Link :href="route('register')" class="float-left underline text-sm text-gray-600 hover:text-gray-900">
+                        Sign up
+                    </Link>
+                </div>
+                <div class="col-span-4 flex items-center justify-end mt-4">
+                    <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900">
+                        Forgot your password?
+                    </Link>
 
-            <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900">
-                    Forgot your password?
-                </Link>
-
-                <jet-button class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </jet-button>
+                    <jet-button class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        Log in
+                    </jet-button>
+                </div>
             </div>
+            
         </form>
     </jet-authentication-card>
 </template>

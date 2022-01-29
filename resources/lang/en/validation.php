@@ -153,6 +153,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'list_data.money_in.amount' => 'Money in amount',
+        'list_data.money_in.paid' => 'Money in paid',
+        'list_data.money_out.amount' => 'Money out amount'
+    ],
 
 ];

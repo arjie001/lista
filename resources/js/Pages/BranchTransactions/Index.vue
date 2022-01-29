@@ -21,10 +21,11 @@
         <jet-dialog-modal :show="modal.add_edit.show">
             <template #title>Add List</template>
             <template #content>
+                <jet-validation-errors class="mb-2" />
                 <jet-label value="Customer" />
                 <div class="flex flex-row">
                     <jet-input-select class="w-full" :lists="customers" v-model="form.customer_id" />
-                    <jet-button class="ml-1" color="black" @click="showModal('add_edit')"><span>New</span></jet-button>
+                    <jet-button class="ml-1" color="black" @click="modal.customer_add.show = true"><span>New</span></jet-button>
                 </div>
                 <div class="flex flex-col flex-grow border border-1 border-gray-300 rounded-sm mt-2">
                     <div class="mb-2"> 
@@ -72,6 +73,22 @@
                 <jet-button color="black" @click="addTransaction()" :disabled="form.processing">{{ form.processing ? 'wait': 'save' }}</jet-button>
             </template>
         </jet-dialog-modal>
+
+        <jet-dialog-modal :show="modal.customer_add.show">
+            <template #title>Add Customer</template>
+            <template #content>
+                <div class="grid grid-cols-6 gap-1 my-1 mx-1">
+                    <div class="col-span-6">
+                        <jet-label value="Name" />
+                        <jet-input type="text" placeholder="Customer name" class="w-full" v-model.number="customer_form.name"/>
+                    </div>
+                </div>
+            </template>
+            <template #footer>
+                <jet-button color="none" @click="modal.customer_add.show = false" class="mr-1">close</jet-button>
+                <jet-button color="black" @click="addCustomer()" :disabled="customer_form.processing">{{ customer_form.processing ? 'wait': 'add customer' }}</jet-button>
+            </template>
+        </jet-dialog-modal>
     </app-layout>
 </template>
 
@@ -85,6 +102,7 @@
     import JetInputError from '@/Jetstream/InputError.vue'
     import JetInputSelect from '@/Jetstream/InputSelect.vue'
     import WgtTotalHeader from '@/Widgets/TotalHeader.vue'
+    import JetValidationErrors from '@/Jetstream/ValidationErrors.vue'
 
     import TransactionList from './List.vue'
 
@@ -100,6 +118,7 @@
             JetInputSelect,
             WgtTotalHeader,
             TransactionList,
+            JetValidationErrors
         },
         data() {
             return {
@@ -122,6 +141,13 @@
                 }, {
                     resetOnSuccess:true,
                 }),
+                customer_form: this.$inertia.form({
+                    name: '',
+                    branch_code: '',
+                    info: []
+                }, {
+                    resetOnSuccess:true,
+                }),
                 modal: {
                     add_edit: {
                         show: false,
@@ -139,6 +165,9 @@
                                 wallet_id: 0
                             }
                         }
+                    },
+                    customer_add: {
+                        show: false
                     }
                 }
             }
@@ -206,6 +235,7 @@
                     this.modal.add_edit.default_data.money_in.wallet_id = this.assign(this.$page.props.branch.config.default.wallet_in)
                     this.modal.add_edit.default_data.money_out.wallet_id = this.assign(this.$page.props.branch.config.default.wallet_out)
                 }
+                this.customer_form.branch_code = this.$page.props.branch.code
             },
             showModal(modal, id = -1) {
                 this.modal[modal].show = true
@@ -242,6 +272,18 @@
                         })
                         this.modal.add_edit.show = false
                         this.modal.add_edit.id = -1
+                    },
+                })
+            },
+            addCustomer() {
+                this.customer_form.post(route('customers.store'),{
+                    preserveScroll:true,
+                    onSuccess:() => {
+                        this.$toast.success('Customer Saved',{
+                            duration:1000
+                        })
+                        this.customer_form.reset()
+                        this.modal.customer_add.show = false
                     },
                 })
             }

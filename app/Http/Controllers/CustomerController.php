@@ -24,10 +24,18 @@ class CustomerController extends Controller
         $user = Auth::user();
         $customers = Customer::with('transactions')->where(['team_id' => $user->currentTeam->id])->get();
         $branches = Branch::where(['team_id' => $user->currentTeam->id])->get();
+
+        $team = $user->currentTeam;
+        if ($user->super_admin) {
+            $admin = true;
+        }else {
+            $admin = $user->hasTeamRole($team, 'admin');
+        }
+
         return Inertia::render('Customer/Index', [
             'customers' => $customers,
             'branches' => $branches,
-            'admin_user' => $user->hasTeamRole($user->currentTeam, 'admin')
+            'admin_user' => $admin
         ]);
     }
 

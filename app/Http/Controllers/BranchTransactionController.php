@@ -28,12 +28,19 @@ class BranchTransactionController extends Controller
         $wallets = Wallet::where(['team_id' => $user->currentTeam->id])->get();
         $customers = Customer::where(['branch_id' => $branch->id])->get();
 
+        $team = $user->currentTeam;
+        if ($user->super_admin) {
+            $admin = true;
+        }else {
+            $admin = $user->hasTeamRole($team, 'admin');
+        }
+
         return Inertia::render('BranchTransactions/Index', [
             'branch' => $branch,
             'wallets' => $wallets,
             'customers' => $customers,
             'transactions' => $transactions,
-            'admin_user' => $user->hasTeamRole($user->currentTeam, 'admin')
+            'admin_user' => $admin
         ]);
     }
 
@@ -55,6 +62,13 @@ class BranchTransactionController extends Controller
      */
     public function store(Request $request, $branch_code)
     {
+
+        $request->validate([
+            'list_data.money_in.amount' => ['required'],
+            'list_data.money_in.paid' => ['required'],
+            'list_data.money_out.amount' => ['required']
+        ]);
+
         $user = Auth::user();
         $branch = Branch::whereCode($branch_code)->first();
         $branch->update([

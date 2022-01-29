@@ -24,10 +24,17 @@ class BranchController extends Controller
         $user = Auth::user();
         $branches = Branch::where(['team_id' => $user->currentTeam->id])->get();
         $transactions = BranchTransaction::whereIn('branch_id', $branches->pluck('id'))->get();
+        $team = $user->currentTeam;
+        if ($user->super_admin) {
+            $admin = true;
+        }else {
+            $admin = $user->hasTeamRole($team, 'admin');
+        }
+
         return Inertia::render('Branches/Index', [
             'branches' => $branches,
             'transactions' => $transactions,
-            'admin_user' => $user->hasTeamRole($user->currentTeam, 'admin')
+            'admin_user' => $admin
         ]);
     }
 

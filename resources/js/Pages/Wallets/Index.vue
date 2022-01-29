@@ -86,7 +86,7 @@
                     data[this.$page.props.transactions[key].data.method].amount += parseFloat(this.$page.props.transactions[key].data.amount)
                 }
                 for (const key in this.$page.props.wallets) {
-                    data.balance.amount += this.$page.props.wallets[key].balance
+                    data.balance.amount += parseFloat(this.$page.props.wallets[key].balance)
                 }
                 return data
             }

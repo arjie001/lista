@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\CustomerController;
@@ -50,6 +51,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function() {
         Route::get('/', [CustomerController::class, 'index'])->name('customers.index');
         Route::post('/store', [CustomerController::class, 'store'])->name('customers.store');
         Route::post('/update/{id}', [CustomerController::class, 'update'])->name('customers.update');
+    });
+
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('users.index');
     });
 });
 

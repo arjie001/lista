@@ -92,7 +92,7 @@
             }
         },
         mounted() {
-            this.$page.props.admin_user = true
+            //this.$page.props.admin_user = true
         },
         methods: {
             addBranch() {                

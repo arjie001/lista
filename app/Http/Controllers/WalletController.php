@@ -24,10 +24,18 @@ class WalletController extends Controller
         $user = Auth::user();
         $wallets = Wallet::where(['team_id' => $user->currentTeam->id])->get();
         $transactions = WalletTransaction::whereIn('wallet_id', $wallets->pluck('id'))->get();
+
+        $team = $user->currentTeam;
+        if ($user->super_admin) {
+            $admin = true;
+        }else {
+            $admin = $user->hasTeamRole($team, 'admin');
+        }
+
         return Inertia::render('Wallets/Index', [
             'wallets' => $wallets,
             'transactions' => $transactions,
-            'admin_user' => $user->hasTeamRole($user->currentTeam, 'admin')
+            'admin_user' => $admin
         ]);
     }
 

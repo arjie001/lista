@@ -16,7 +16,6 @@
                                     <jet-application-mark class="block h-9 w-auto" />
                                 </Link>
                             </div>
-
                             <!-- Navigation Links -->
                             <div class="hidden space-x-1 sm:-my-px sm:ml-10 sm:flex">
                                 <jet-nav-link :href="route('branches.index')" :active="route().current('branches.index')">
@@ -28,7 +27,16 @@
                                 <jet-nav-link :href="route('customers.index')" :active="route().current('customers.index')">
                                     Customers
                                 </jet-nav-link>
+                                <jet-nav-link :href="route('users.index')" :active="route().current('users.index')">
+                                    Users
+                                </jet-nav-link>
                             </div>
+                        </div>
+                        
+                        
+                        <!-- Header -->
+                        <div class="sm:hidden flex items-center">
+                            <div class="w-full font-bold text-center">{{ layouts?.header}}</div>
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -156,6 +164,9 @@
                         </jet-responsive-nav-link>
                         <jet-responsive-nav-link :href="route('customers.index')" :active="route().current('customers.index')">
                             Customers
+                        </jet-responsive-nav-link>
+                        <jet-responsive-nav-link :href="route('users.index')" :active="route().current('users.index')">
+                            Users
                         </jet-responsive-nav-link>
                     </div>
 
