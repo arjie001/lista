@@ -22,14 +22,14 @@
             <template #title>Cash {{ form.list_data.method }}</template>
             <template #content>
                 <div class="grid grid-cols-6 gap-1">
-                    <div class="col-span-4">
+                    <div class="col-span-6">
                         <jet-label value="Amount" />
                         <jet-input type="number" class="w-full" v-model="form.list_data.amount"/>
                     </div>
-                    <div class="col-span-2">
+                    <!-- <div class="col-span-2">
                         <jet-label value="Fee" />
                         <jet-input type="number" class="w-full" v-model="form.list_data.fee"/>
-                    </div>
+                    </div> -->
                     <div class="col-span-6">
                         <jet-label value="Note" />
                         <jet-input type="text" class="w-full" placeholder="Description" v-model="form.list_data.note"/>
