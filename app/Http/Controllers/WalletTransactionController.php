@@ -69,8 +69,10 @@ class WalletTransactionController extends Controller
             'balance' =>  $new_balance
         ]);
 
+        $list_data = $request->list_data;
+        $list_data['balance'] = $new_balance;
         $transaction = WalletTransaction::create([
-            'data' => $request->list_data,
+            'data' => $list_data,
             'user_id' => $user->id,
             'wallet_id' => $wallet->id
         ]);

@@ -76,7 +76,7 @@
                     list_data: {
                         method: 'in',
                         amount: 0,
-                        fee: 0,
+                        balance: 0,
                         note: ''
                     }
                 }, {

@@ -10,12 +10,13 @@
                         <div class="text-sm">{{ transaction.data.note || 'n/a' }}</div>
                         <div class="text-xs">{{ moment(transaction.created_at).format("ddd MMM DD, YYYY")}}</div>
                     </div>
-                    <div class="col-span-1 flex flex-col" :class="{'text-red-400': transaction.data.fee > 0}">
+                    <div class="col-span-1 flex flex-col">
                         <span class="text-center">
-                            {{ money(transaction.data.fee) }}
+                            <span v-if="transaction.data.balance != undefined">{{ money(transaction.data.balance) }}</span>
+                            <span v-else>NA</span>
                         </span>
                         <span class="text-center">
-                            Fee
+                            Balance
                         </span>
                     </div>
                     <div class="col-span-2 flex flex-col" :class="transaction.data.method == 'in'? 'text-blue-500': 'text-red-400'">
