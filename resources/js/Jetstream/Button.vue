@@ -1,5 +1,5 @@
 <template>
-    <button :type="type" :class="colors" class="inline-flex items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring focus:ring-gray-300 disabled:opacity-25 transition">
+    <button :type="type" :class="colors" class="items-center px-4 py-3 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring focus:ring-gray-300 disabled:opacity-25 transition">
         <slot></slot>
     </button>
 </template>
@@ -27,7 +27,7 @@
             },
             colors() {
                 return {
-                    black: "text-white bg-gray-800 border border-transparent hover:bg-gray-700 active:bg-gray-900 focus:border-gray-900",
+                    black: "text-white bg-gray-800 border-gray-800 hover:bg-gray-700 hover:border-gray-600 active:bg-gray-900 focus:border-gray-900",
                     blue: "text-white bg-blue-500 border-blue-500 hover:bg-blue-600 hover:border-blue-600",
                     gray: "text-white bg-gray-400 border-gray-400 hover:bg-gray-500 hover:border-gray-500",
                     yellow: "text-white bg-yellow-400 border-yellow-400 hover:bg-yellow-500 hover:border-yellow-500",

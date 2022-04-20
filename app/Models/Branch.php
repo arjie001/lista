@@ -23,6 +23,6 @@ class Branch extends Model
     
     public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Transaction::class, 'branch_id', 'id');
+        return $this->hasMany(BranchTransaction::class, 'branch_id', 'id');
     }
 }

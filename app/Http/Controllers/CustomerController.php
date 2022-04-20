@@ -3,31 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
-use App\Models\Transaction;
-use App\Models\Wallet;
+use App\Models\BranchTransaction;
+use App\Models\Customer;
 
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 use Inertia\Inertia;
 
-class TransactionController extends Controller
+class CustomerController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($branch_code)
+    public function index()
     {
         $user = Auth::user();
-        $branch = Branch::whereCode($branch_code)->first();
-        $transactions = Transaction::where(['branch_id' => $branch->id])->get();
-        $wallets = Wallet::where(['team_id' => $user->currentTeam->id])->get();
-        return Inertia::render('Transactions/Index', [
-            'branch' => $branch,
-            'wallets' => $wallets,
-            'transactions' => $transactions
+        $customers = Customer::with('transactions')->where(['team_id' => $user->currentTeam->id])->get();
+        $branches = Branch::where(['team_id' => $user->currentTeam->id])->get();
+
+        $team = $user->currentTeam;
+        if ($user->super_admin) {
+            $admin = true;
+        }else {
+            $admin = $user->hasTeamRole($team, 'admin');
+        }
+
+        return Inertia::render('Customer/Index', [
+            'customers' => $customers,
+            'branches' => $branches,
+            'admin_user' => $admin
         ]);
     }
 
@@ -49,15 +57,17 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        /* $request->validate([
+        $request->validate([
             'name' => ['required']
-        ]); */
-
+        ]);
+        $branch = Branch::whereCode($request->branch_code)->first();
         $user = Auth::user();
 
-        Transaction::create([
-            'branch_id' => $request->branch_id,
-            'data' => $request->data
+        Customer::create([
+            'name' => $request->name,
+            'data' => $request->info,
+            'team_id' => $user->currentTeam->id,
+            'branch_id' => $branch->id
         ]);
 
         return Redirect::back();
@@ -94,7 +104,15 @@ class TransactionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $customer = Customer::find($id);
+        $branch = Branch::whereCode($request->branch_code)->first();
+        $customer->update([
+            'name' => $request->name,
+            'data' => $request->info,
+            'branch_id' => $branch->id
+        ]);
+
+        return Redirect::back();
     }
 
     /**

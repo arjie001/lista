@@ -2,37 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Branch;
-use App\Models\BranchTransaction;
+use App\Models\Wallet;
+use App\Models\WalletTransaction;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Str;
 
 use Inertia\Inertia;
 
-class BranchController extends Controller
+class WalletTransactionController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($walelt_code)
     {
         $user = Auth::user();
-        $branches = Branch::where(['team_id' => $user->currentTeam->id])->get();
-        $transactions = BranchTransaction::whereIn('branch_id', $branches->pluck('id'))->get();
+        $wallet = Wallet::whereCode($walelt_code)->first();
+        $transactions = WalletTransaction::with('user')->where(['wallet_id' => $wallet->id])->get();
+
         $team = $user->currentTeam;
         if ($user->super_admin) {
             $admin = true;
         }else {
             $admin = $user->hasTeamRole($team, 'admin');
         }
-
-        return Inertia::render('Branches/Index', [
-            'branches' => $branches,
+        return Inertia::render('WalletTransactions/Index', [
+            'wallet' => $wallet,
             'transactions' => $transactions,
             'admin_user' => $admin
         ]);
@@ -54,25 +54,27 @@ class BranchController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $wallet_code)
     {
-        $request->validate([
-            'name' => ['required']
-        ]);
-
+        $wallet = Wallet::whereCode($wallet_code)->first();
         $user = Auth::user();
 
-        $default_config = [
-            'default' => [
-                'wallet_in' => 0,
-                'wallet_out' => 0
-            ]
-        ];
-        Branch::create([
-            'name' => $request->name,
-            'code' => Str::random(5),
-            'config' => $default_config,
-            'team_id' => $user->currentTeam->id
+        if ($request->list_data['method'] == 'in') {
+            $new_balance = $wallet->balance + $request->list_data['amount'];
+        } else {
+            $new_balance = $wallet->balance - $request->list_data['amount'];
+        }
+        
+        $wallet->update([
+            'balance' =>  $new_balance
+        ]);
+
+        $list_data = $request->list_data;
+        $list_data['balance'] = $new_balance;
+        $transaction = WalletTransaction::create([
+            'data' => $list_data,
+            'user_id' => $user->id,
+            'wallet_id' => $wallet->id
         ]);
 
         return Redirect::back();

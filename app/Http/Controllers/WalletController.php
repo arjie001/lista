@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Wallet;
+use App\Models\WalletTransaction;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,9 +23,19 @@ class WalletController extends Controller
     {
         $user = Auth::user();
         $wallets = Wallet::where(['team_id' => $user->currentTeam->id])->get();
+        $transactions = WalletTransaction::whereIn('wallet_id', $wallets->pluck('id'))->get();
+
+        $team = $user->currentTeam;
+        if ($user->super_admin) {
+            $admin = true;
+        }else {
+            $admin = $user->hasTeamRole($team, 'admin');
+        }
+
         return Inertia::render('Wallets/Index', [
             'wallets' => $wallets,
-            'admin_user' => $user->hasTeamRole($user->currentTeam, 'admin')
+            'transactions' => $transactions,
+            'admin_user' => $admin
         ]);
     }
 

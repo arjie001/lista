@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Customer extends Model
+class WalletTransaction extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -16,8 +16,8 @@ class Customer extends Model
         'data' => 'json',
     ];
 
-    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->hasMany(BranchTransaction::class, 'customer_id', 'id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
