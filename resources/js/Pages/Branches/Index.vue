@@ -5,7 +5,7 @@
         </template>
 
         <div class="py-1">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 ">
                 <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden overflow-y-auto" :class="$page.props.admin_user ? 'content-admin': 'content-editor'">
                     <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                         <wgt-total-header :total="total" />
